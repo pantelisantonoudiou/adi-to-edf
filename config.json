@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jul  1 16:55:43 2021
+
+@author: panton01
+"""
+
+{"fs" : 4000,
+"ch_id":  ["lfp","eeg","emg"],
+"ch_list": [0, 1, 2],
+"dimension": ["V","V","V"],
+"physical_max": [1, 1, 1],
+"physical_min": [-1, -1, -1],
+"digital_max": [10, 10, 10],
+"digital_min": [-10, -10, -10]
+}
+
