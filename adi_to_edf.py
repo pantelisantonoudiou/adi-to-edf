@@ -149,7 +149,7 @@ class Adi2Edf:
                 self.read_test(block)
                 
                 # convert file
-                # self.convert_block(block)
+                self.convert_block(block)
                 
             except:
                 print('Skipped block :', block, 'in File:', self.file_name)
