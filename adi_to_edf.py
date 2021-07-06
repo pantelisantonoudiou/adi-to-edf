@@ -6,7 +6,7 @@ Created on Fri Jul  2 11:02:32 2021
 """
 
 ### ------------------------ IMPORTS -------------------------------------- ###
-import os, sys, json
+import os
 from tqdm import tqdm
 import numpy as np
 from scipy import signal
@@ -18,7 +18,7 @@ import pyedflib    # EDF file writer
 
 def rem_array(start:int, stop:int, div:int):
     """
-    Creates an array using np linspace, can also handle last segment smaller than div
+    Creates an array with elements divided by div
     
     Parameters
     ----------
@@ -101,7 +101,13 @@ class Adi2Edf:
         
     def convert_file(self):
         """
-        Converts labchart file to EDF in blocks.
+        Converts all blocks in a labchart file to EDF files.
+        One per block.
+        
+        e.g.___________________________________________
+        input.adicht with 2 blocks will be converted to:
+            - input_a.edf
+            - input_b.edf
 
         Returns
         -------
@@ -109,11 +115,32 @@ class Adi2Edf:
 
         """
     
+        # get all blocks
+        all_blocks = len(self.file_obj.channels[0].n_samples)
+        
+        for block in range(all_blocks): # iterate over blocks
+            print('-> Converting block :', block, 'in File:', self.file_name )
+            
+            # convert file
+            self.convert_block(block)
+        
+        
+    def convert_block(self, block:int):
+        """
+        Convert one block from labchart to EDF.
 
-        all_blocks = len(self.file_obj.channels[0].n_samples) # get all blocks
+        Parameters
+        ----------
+        block : int, labchart block number
+
+        Returns
+        -------
+        None.
+
+        """
+ 
         
         # get block length in samples
-        block = 0
         file_len = self.file_obj.channels[self.ch_list[0]].n_samples[block]
         
         # get number of chunks
@@ -121,29 +148,27 @@ class Adi2Edf:
         idx = np.unique(idx) # remove duplicates
         
         # intialize EDF object
-        with pyedflib.EdfWriter(os.path.join(self.save_path, self.file_name + '.edf'),
+        with pyedflib.EdfWriter(os.path.join(self.save_path, self.file_name + ascii_lowercase[block] + '.edf'),
                                  len(self.ch_list), file_type = pyedflib.FILETYPE_EDF) as edf:
             
             # write headers
             edf.setSignalHeaders(self.channel_info)
 
-            for i in tqdm(range(idx.shape[0]-1)): # iterate over channel length in chuncks
+            for i in tqdm(range(idx.shape[0]-1)): # iterate over channel length in chunks
                 
-                # retrieve data across selected channels in self.ch_list
+                # retrieve data chunk from channels in self.ch_list
                 data = self.get_filechunks(block, [idx[i], idx[i+1]])
                 
-                # write data block to edf file       
+                # write data chunk to edf file       
                 edf.writeSamples(data)
     
-            # close
+            # close edf file writer
             edf.close()
-            
-
     
 
     def get_filechunks(self, block:int, idx:list):
         """
-        Retrieves data from labchart file and decimates
+        Retrieves data from labchart file and decimates according to self.down_factor.
 
         Parameters
         ----------
@@ -176,15 +201,16 @@ class Adi2Edf:
                 data.append(signal.decimate(temp_data, self.down_factor))
             
         return data
+  
     
 # Execute if module runs as main program
 if __name__ == '__main__':   
     
     # define dictionary
     propeties = {
-       "load_path": r'W:\Maguire Lab\Trina\2020\03- March\4641_4642_4815_4816\raw_data',
+       "load_path": r'C:\Users\panton01\Desktop',
        "save_path": r'C:\Users\panton01\Desktop\sleep scoring files\edfs',
-       "file_name": "030920",
+       "file_name": "031120",
        "ch_list": [6, 8, 7],
        "fs" : 4000,
        "new_fs": 250,             
@@ -202,11 +228,7 @@ if __name__ == '__main__':
     obj = Adi2Edf(propeties)
     
     # convert file
-    from time import time
-    
-    tic = time()
     obj.convert_file()
-    print(time()-tic)
     
     
     
