@@ -93,36 +93,33 @@ class Adi2Edf:
             
             # append info
             self.channel_info.append(ch_dict)
-            
+
         # Get adi file obj to retrieve settings
         self.file_obj = adi.read_file(os.path.join(self.load_path, self.file_name + '.adicht'))
         
         
-    def read_test(self):
+    def read_test(self, block):
         """
-        # try to read the start, middle and endof a labchart block
+        # try to read the start, middle and end of a labchart block
+        
+        Parameters
+        ----------
+        block : int, labchart block number
 
         Returns
         -------
         None.
 
         """
+            
+        # get first channel (applies across animals channels)
+        chobj = self.file_obj.channels[self.ch_list[0]] # get channel obj
+        length = chobj.n_samples[block] # get block length in samples
         
-        all_blocks = len(self.file_obj.channels[0].n_samples) # get all blocks
-        
-        for block in range(all_blocks):
-            
-            # print file being analyzed
-            print('-> Reading from block :', block, 'in File:', self.file_name)
-            
-            # get first channel (applies across animals channels)
-            chobj = self.file_obj.channels[self.ch_list[0]] # get channel obj
-            length = chobj.n_samples[block] # get block length in samples
-            
-            # read parts of file
-            chobj.get_data(block+1, start_sample=0, stop_sample=1000) # start
-            chobj.get_data(block+1, start_sample=int(length/2), stop_sample=int(length/2)+1000) # middle
-            chobj.get_data(block+1, start_sample=length-1000, stop_sample=length-1) # end
+        # read parts of file
+        chobj.get_data(block+1, start_sample=0, stop_sample=1000) # start
+        chobj.get_data(block+1, start_sample=int(length/2), stop_sample=int(length/2)+1000) # middle
+        chobj.get_data(block+1, start_sample=length-1000, stop_sample=length-1) # end
 
     def convert_file(self):
         """
@@ -144,10 +141,18 @@ class Adi2Edf:
         all_blocks = len(self.file_obj.channels[0].n_samples)
         
         for block in range(all_blocks): # iterate over blocks
-            print('-> Converting block :', block, 'in File:', self.file_name )
-            
-            # convert file
-            self.convert_block(block)
+        
+            try:
+                print('-> Converting block :', block, 'in File:', self.file_name )
+                
+                # check if block can be read
+                self.read_test(block)
+                
+                # convert file
+                # self.convert_block(block)
+                
+            except:
+                print('Skipped block :', block, 'in File:', self.file_name)
         
         
     def convert_block(self, block:int):
@@ -172,8 +177,8 @@ class Adi2Edf:
         idx = np.unique(idx) # remove duplicates
         
         # intialize EDF object
-        with pyedflib.EdfWriter(os.path.join(self.save_path, self.file_name + ascii_lowercase[block] + '.edf'),
-                                 len(self.ch_list), file_type = pyedflib.FILETYPE_EDF) as edf:
+        file_path = os.path.join(self.save_path, self.file_name + '_' + str(self.subject) + ascii_lowercase[block] + '.edf')
+        with pyedflib.EdfWriter(file_path, len(self.ch_list), file_type = pyedflib.FILETYPE_EDF) as edf:
             
             # write headers
             edf.setSignalHeaders(self.channel_info)
@@ -232,9 +237,10 @@ if __name__ == '__main__':
     
     # define dictionary
     propeties = {
-       "load_path": r'C:\Users\panton01\Desktop',
-       "save_path": r'C:\Users\panton01\Desktop\sleep scoring files\edfs',
+       "load_path": 'path-to-file-parent-folder',
        "file_name": "031120",
+       "save_path": 'path-to-folder-for-saving-edf-file',
+       "subject": 2,
        "ch_list": [6, 8, 7],
        "fs" : 4000,
        "new_fs": 250,             
@@ -247,19 +253,12 @@ if __name__ == '__main__':
        "chunksize" : 5000000,
        }
     
-    
     # init object
     obj = Adi2Edf(propeties)
     
-    # check if file can be read and then convert
-    try: 
-        # read files
-        obj.read_test()
-        
-        # convert file
-        obj.convert_file()
-    except:
-        print('Could not read file')
+    # convert file
+    obj.convert_file()
+
     
     
     
