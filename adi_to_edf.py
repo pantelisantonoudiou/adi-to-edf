@@ -96,9 +96,34 @@ class Adi2Edf:
             
         # Get adi file obj to retrieve settings
         self.file_obj = adi.read_file(os.path.join(self.load_path, self.file_name + '.adicht'))
+        
+        
+    def read_test(self):
+        """
+        # try to read the start, middle and endof a labchart block
 
+        Returns
+        -------
+        None.
+
+        """
         
+        all_blocks = len(self.file_obj.channels[0].n_samples) # get all blocks
         
+        for block in range(all_blocks):
+            
+            # print file being analyzed
+            print('-> Reading from block :', block, 'in File:', self.file_name)
+            
+            # get first channel (applies across animals channels)
+            chobj = self.file_obj.channels[self.ch_list[0]] # get channel obj
+            length = chobj.n_samples[block] # get block length in samples
+            
+            # read parts of file
+            chobj.get_data(block+1, start_sample=0, stop_sample=1000) # start
+            chobj.get_data(block+1, start_sample=int(length/2), stop_sample=int(length/2)+1000) # middle
+            chobj.get_data(block+1, start_sample=length-1000, stop_sample=length-1) # end
+
     def convert_file(self):
         """
         Converts all blocks in a labchart file to EDF files.
@@ -138,7 +163,6 @@ class Adi2Edf:
         None.
 
         """
- 
         
         # get block length in samples
         file_len = self.file_obj.channels[self.ch_list[0]].n_samples[block]
@@ -201,7 +225,7 @@ class Adi2Edf:
                 data.append(signal.decimate(temp_data, self.down_factor))
             
         return data
-  
+    
     
 # Execute if module runs as main program
 if __name__ == '__main__':   
@@ -227,9 +251,15 @@ if __name__ == '__main__':
     # init object
     obj = Adi2Edf(propeties)
     
-    # convert file
-    obj.convert_file()
-    
+    # check if file can be read and then convert
+    try: 
+        # read files
+        obj.read_test()
+        
+        # convert file
+        obj.convert_file()
+    except:
+        print('Could not read file')
     
     
     
