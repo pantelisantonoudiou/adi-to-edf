@@ -143,7 +143,7 @@ class Adi2Edf:
         for block in range(all_blocks): # iterate over blocks
         
             try:
-                print('-> Converting block :', block, 'in File:', self.file_name, '\n')
+                print('--- Converting block :', block, 'in File:', self.file_name + '.adicht', '\n')
                 
                 # check if block can be read
                 self.read_test(block)
