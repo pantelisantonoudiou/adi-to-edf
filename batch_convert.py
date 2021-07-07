@@ -127,6 +127,9 @@ def main(csv_path:str):
         # init object
         obj = Adi2Edf(properties)
         
+        # convert file
+        obj.convert_file()
+        
     click.secho('\n----------------- EDF conversion completed -----------------\n', fg = 'white', bold = True)
     
 # Execute if module runs as main program
@@ -137,10 +140,7 @@ if __name__ == '__main__':
     
 
 
-    #     # convert file
-    #     obj.convert_file()
         
-    # 
 
             
 
