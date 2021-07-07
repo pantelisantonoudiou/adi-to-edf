@@ -118,10 +118,10 @@ def main(csv_path:str):
         
         # update properties for each animal
         properties.update({
-            "load_path" : file_path,
-            "file_name": file_name.replace('.adicht','') ,
-            "subject": filepaths.animalID[i],
-            "ch_list" : properties['animal_ch_list'][pos]
+            'load_path' : file_path,
+            'file_name' : file_name.replace('.adicht','') ,
+            'subject' : filepaths.animalID[i],
+            'ch_list' : properties['animal_ch_list'][pos]
             })
         
         # init object

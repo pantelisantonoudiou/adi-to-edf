@@ -16,7 +16,7 @@ import adi         # read labchart files
 import pyedflib    # EDF file writer
 ### ------------------------------------------------------------------------###
 
-
+@beartype
 def rem_array(start:int, stop:int, div:int):
     """
     Creates an array with elements divided by div
