@@ -7,6 +7,7 @@ Created on Fri Jul  2 11:02:32 2021
 
 ### ------------------------ IMPORTS -------------------------------------- ###
 import os
+from beartype import beartype
 from tqdm import tqdm
 import numpy as np
 from scipy import signal
@@ -42,21 +43,45 @@ def rem_array(start:int, stop:int, div:int):
 
 class Adi2Edf:
     """
-    Base class for converting and decimating labchart files to edf format
+    Base class for converting and decimating labchart files to edf format.
     
-    1) One labchart file may contain multiple animals
-    2) Each animal may have multiple channels
-    3) For example one file -> 1-12 channels and 4 animals
-    4) One EDF file will contain all channels for 1 animal (eg. 1-3)
+    1) One labchart file may contain multiple subjects
+    2) Each subject may have multiple channels
+    3) For example one file -> 1-12 channels and 4 subjects
+    4) One EDF file will contain all channels for 1 subject (eg. 1-3)
     5) One labchart file could also be divided into multiple blocks
     ---------------------------------------------------------------
     For example a file foo.adicht with two block will be converted to
     foo_a.edf and foo_b.edf. It will include channels specified in the
     ch_list.
     
+    # define input
+    propeties = {
+       "load_path": 'path-to-file-parent-folder',
+       "file_name": "031018",
+       "save_path": 'path-to-folder-for-saving-edf-file',
+       "subject": 2,
+       "ch_list": [6, 8, 7],
+       "fs" : 4000,
+       "new_fs": 250,             
+       "ch_id":  ["lfp","eeg","emg"],
+       "dimension": ["V","V","V"],
+       "physical_max": [0.1, 0.1, 0.01],
+       "physical_min": [-0.1, -0.1, -0.01],
+       "digital_max": [32000, 32000, 32000],
+       "digital_min": [-32000, -32000, -32000],
+       "chunksize" : 5000000,
+       }
+    
+    # init object
+    obj = Adi2Edf(propeties)
+    
+    # convert file
+    obj.convert_file()
+    
     """
    
-    # class constructor
+    @beartype
     def __init__(self, propeties:dict):
         """
         
@@ -96,30 +121,6 @@ class Adi2Edf:
 
         # Get adi file obj to retrieve settings
         self.file_obj = adi.read_file(os.path.join(self.load_path, self.file_name + '.adicht'))
-        
-        
-    def read_test(self, block):
-        """
-        # try to read the start, middle and end of a labchart block
-        
-        Parameters
-        ----------
-        block : int, labchart block number
-
-        Returns
-        -------
-        None.
-
-        """
-            
-        # get first channel (applies across animals channels)
-        chobj = self.file_obj.channels[self.ch_list[0]] # get channel obj
-        length = chobj.n_samples[block] # get block length in samples
-        
-        # read parts of file
-        chobj.get_data(block+1, start_sample=0, stop_sample=1000) # start
-        chobj.get_data(block+1, start_sample=int(length/2), stop_sample=int(length/2)+1000) # middle
-        chobj.get_data(block+1, start_sample=length-1000, stop_sample=length-1) # end
 
     def convert_file(self):
         """
@@ -153,8 +154,31 @@ class Adi2Edf:
                 
             except:
                 print('Skipped block :', block, 'in File:', self.file_name)
+    @beartype    
+    def read_test(self, block:int):
+        """
+        # try to read the start, middle and end of a labchart block
         
+        Parameters
+        ----------
+        block : int, labchart block number
+
+        Returns
+        -------
+        None.
+
+        """
+            
+        # get first channel (applies across subjects channels)
+        chobj = self.file_obj.channels[self.ch_list[0]] # get channel obj
+        length = chobj.n_samples[block] # get block length in samples
         
+        # read parts of file
+        chobj.get_data(block+1, start_sample=0, stop_sample=1000) # start
+        chobj.get_data(block+1, start_sample=int(length/2), stop_sample=int(length/2)+1000) # middle
+        chobj.get_data(block+1, start_sample=length-1000, stop_sample=length-1) # end
+     
+    @beartype    
     def convert_block(self, block:int):
         """
         Convert one block from labchart to EDF.
@@ -194,7 +218,7 @@ class Adi2Edf:
             # close edf file writer
             edf.close()
     
-
+    @beartype
     def get_filechunks(self, block:int, idx:list):
         """
         Retrieves data from labchart file and decimates according to self.down_factor.
@@ -231,40 +255,3 @@ class Adi2Edf:
             
         return data
     
-    
-# Execute if module runs as main program
-if __name__ == '__main__':   
-    
-    # define dictionary
-    propeties = {
-       "load_path": 'path-to-file-parent-folder',
-       "file_name": "031120",
-       "save_path": 'path-to-folder-for-saving-edf-file',
-       "subject": 2,
-       "ch_list": [6, 8, 7],
-       "fs" : 4000,
-       "new_fs": 250,             
-       "ch_id":  ["lfp","eeg","emg"],
-       "dimension": ["V","V","V"],
-       "physical_max": [0.1, 0.1, 0.01],
-       "physical_min": [-0.1, -0.1, -0.01],
-       "digital_max": [32000, 32000, 32000],
-       "digital_min": [-32000, -32000, -32000],
-       "chunksize" : 5000000,
-       }
-    
-    # init object
-    obj = Adi2Edf(propeties)
-    
-    # convert file
-    obj.convert_file()
-
-    
-    
-    
-    
-    
-    
-    
-        
-        
