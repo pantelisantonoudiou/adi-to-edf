@@ -6,11 +6,13 @@ Created on Tue Jul  6 14:27:20 2021
 """
 
 ### ------------------------ IMPORTS -------------------------------------- ###
-import json, os
+from beartype import beartype
+import json, os, click
 import pandas as pd
 from adi_to_edf import Adi2Edf
 ### ------------------------------------------------------------------------###
 
+@beartype
 def sep_dir(file_path:str, sepint:int = 1):
     """
     Separates string to two segments based on os separator.
@@ -45,7 +47,7 @@ def sep_dir(file_path:str, sepint:int = 1):
     
     return first_path, inner_dir
 
-
+@beartype
 def find_position(input_str:str, match_str:str, sep:str):
     """
     Separates input_str with sep and finds position of match_str in the separated list.
@@ -69,30 +71,45 @@ def find_position(input_str:str, match_str:str, sep:str):
     pos = str_list.index(match_str)
     
     return pos
-    
 
-# Execute if module runs as main program
-if __name__ == '__main__': 
 
-    # Load config file 
-    try:
-        config = open('config.json', 'r').read()
-        config = json.loads(config)
-    except Exception as err:
-        raise FileNotFoundError(f"Unable to read the config file.\n{err}")
+@click.command()
+@click.argument('csv_path', type = str)
+def main(csv_path:str):
+    """
+    Convert labchart files to EDFs.
 
-    # read csv file with eeg file paths
-    filepaths = pd.read_csv('eeg_paths.csv')
+    Parameters
+    ----------
+    csv_path : str, file containing paths to labchart files and channels to analyze .
+
+    Returns
+    -------
+    None.
+
+    """
     
-    # define channel list
-    animal_ch_list = [[0,1,2], [3,4,5], [6,7,8], [9,10,11]] 
-    
-    # pass config to properties and update with animal settings
-    properties = config
-    
-    for i in range(len(filepaths)): # iterate over files
-        print('-> Initiating conversion in File', i+1, 'out of', str(len(filepaths)) + ':\n')
+    if not os.path.exists(os.path.dirname(csv_path)):
+        click.secho(f"\n -> '{csv_path}' was not found\n" , fg = 'red', bold = True)
+        return
         
+    # get csv file with eeg file paths
+    filepaths = pd.read_csv(csv_path)
+    
+    # load config file 
+    try:
+        properties = open('config.json', 'r').read()
+        properties = json.loads(properties)
+    except Exception as err:
+        raise FileNotFoundError(f'Unable to read the config file.\n{err}')
+
+    # iterate over labchart files
+    for i in range(len(filepaths)):
+        
+        # print file converted
+        print_str = '-> Initiating conversion in File '+ str(i+1) + ' out of ' + str(len(filepaths)) + ':\n'
+        click.secho(print_str , fg = 'green', bold = True)
+
         # separate file path with the file name
         file_path, file_name = sep_dir(filepaths.file_path[i]) 
         
@@ -104,23 +121,28 @@ if __name__ == '__main__':
             "load_path" : file_path,
             "file_name": file_name.replace('.adicht','') ,
             "subject": filepaths.animalID[i],
-            "ch_list" : animal_ch_list[pos]
+            "ch_list" : properties['animal_ch_list'][pos]
             })
-    
+        
         # init object
         obj = Adi2Edf(properties)
-
-        # convert file
-        obj.convert_file()
         
-    print('\n----------------- EDF conversion completed -----------------\n')
+    click.secho('\n----------------- EDF conversion completed -----------------\n', fg = 'white', bold = True)
+    
+# Execute if module runs as main program
+if __name__ == '__main__': 
+    main()
+
+   
+    
+
+
+    #     # convert file
+    #     obj.convert_file()
+        
+    # 
 
             
-
-
-
-
-
 
        
 
