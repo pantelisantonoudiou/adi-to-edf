@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul  1 16:55:43 2021
-
-@author: panton01
-"""
-
-{"fs" : 4000,
+{"save_path": "Path-to-folder-where-edfs-will-be-stored",
+"fs" : 4000,
+"new_fs": 250,             
 "ch_id":  ["lfp","eeg","emg"],
-"ch_list": [0, 1, 2],
 "dimension": ["V","V","V"],
-"physical_max": [1, 1, 1],
-"physical_min": [-1, -1, -1],
-"digital_max": [10, 10, 10],
-"digital_min": [-10, -10, -10]
+"physical_max": [0.1, 0.1, 0.01],
+"physical_min": [-0.1, -0.1, -0.01],
+"digital_max": [32000, 32000, 32000],
+"digital_min": [-32000, -32000, -32000],
+"chunksize" : 5000000,
+"animal_ch_list":  [[1,2,3], [4,5,6], [7,8,9], [10,11,12]]
 }
 
