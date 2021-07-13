@@ -16,7 +16,7 @@ A labchart file that contains four animals will be converted to four edf files.
 - CSV file with paths (check eeg_paths_template.csv for detailed info)
 ---
 ### How to run
-    python path to
+    python \eeg_paths_template.csv
 ---
 ### :snake: Dependencies
 
