@@ -39,7 +39,6 @@ A labchart file that contains 4 animals will be converted to 4 edf files.
     - ch_id : Channel names.
     - animal_ch_list : List containing smaller lists with indivdiual animal channels
     per labchart file.
-    - save_path : Path to folder where edf files will be stored.
     
     edf attributes, click [here](https://pyedflib.readthedocs.io/en/latest/ref/edfwriter.html) for more information.
     --------------
