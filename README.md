@@ -5,7 +5,7 @@
 - Blocks from labchart files will be converted to new edf files.
 
 For example:
-A labchart file that contains four animals will be converted to four edf files.
+A labchart file that contains 4 animals will be converted to 4 edf files.
 
 ---
 
