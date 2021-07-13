@@ -6,18 +6,18 @@
 
 For example:
 A labchart file that contains four animals will be converted to four edf files.
-
+---
 ### Requirements
-- Currenyl only runs on windows OS due to labchart toolbox dependency.
-- Each animal in one labchart file has the same number of channels.
-
+- Currently only runs on windows OS due to labchart toolbox [SDK dependency](https://www.adinstruments.com/support/knowledge-base/can-i-read-raw-data-recorded-labchart-data-files-another-companys-software).
+- All animals per labchart file have the same number of channels.
+---
 -> For batch analysis (batch_convert.py)
 - All files have the same channel format.
 - CSV file with paths (check eeg_paths_template.csv for detailed info)
-
+---
 ### How to run
     python path to
-
+---
 ### :snake: Dependencies
 
 - [numpy](https://numpy.org/)
@@ -29,11 +29,10 @@ A labchart file that contains four animals will be converted to four edf files.
 - [beartype](https://github.com/beartype/beartype)
 - [click](https://click.palletsprojects.com/en/8.0.x/)
 
-
 ---
+
 ### Configuration settings
-    - save_path: Path to folder that 
-    
+    - save_path: Path to folder that edf files will be saved.
     - fs : sampling rate (samples per second), Default = 4000.
     - new_fs : sampling rate after decimation (samples per second), Default = 250.
     - chunksize : Number of samples to load in memory during conversion.
