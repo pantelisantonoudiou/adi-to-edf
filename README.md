@@ -32,18 +32,18 @@ A labchart file that contains 4 animals will be converted to 4 edf files.
 ---
 
 ### Configuration settings
-    - save_path: Path to folder that edf files will be saved.
-    - fs : sampling rate (samples per second), Default = 4000.
-    - new_fs : sampling rate after decimation (samples per second), Default = 250.
-    - chunksize : Number of samples to load in memory during conversion.
-    - ch_id : Channel names.
-    - animal_ch_list : List containing smaller lists with indivdiual animal channels
-    per labchart file.
+- save_path: Path to folder that edf files will be saved.
+- fs : sampling rate (samples per second), Default = 4000.
+- new_fs : sampling rate after decimation (samples per second), Default = 250.
+- chunksize : Number of samples to load in memory during conversion.
+- ch_id : Channel names.
+- animal_ch_list : List containing smaller lists with indivdiual animal channels
+per labchart file.
     
-    edf attributes, click [here](https://pyedflib.readthedocs.io/en/latest/ref/edfwriter.html) for more information.
-    --------------
-    - physical_max
-    - physical_min
-    - digital_max
-    - digital_min
-    - dimension
+edf attributes, click [here](https://pyedflib.readthedocs.io/en/latest/ref/edfwriter.html) for more information.
+--------------
+- physical_max
+- physical_min
+- digital_max
+- digital_min
+- dimension
