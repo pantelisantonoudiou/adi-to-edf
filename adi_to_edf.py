@@ -121,6 +121,7 @@ class Adi2Edf:
 
         # Get adi file obj to retrieve settings
         self.file_obj = adi.read_file(os.path.join(self.load_path, self.file_name + '.adicht'))
+        
 
     def convert_file(self):
         """
@@ -154,6 +155,8 @@ class Adi2Edf:
                 
             except:
                 print('Skipped block :', block, 'in File:', self.file_name)
+                
+                
     @beartype    
     def read_test(self, block:int):
         """
@@ -177,7 +180,8 @@ class Adi2Edf:
         chobj.get_data(block+1, start_sample=0, stop_sample=1000) # start
         chobj.get_data(block+1, start_sample=int(length/2), stop_sample=int(length/2)+1000) # middle
         chobj.get_data(block+1, start_sample=length-1000, stop_sample=length-1) # end
-     
+    
+        
     @beartype    
     def convert_block(self, block:int):
         """
@@ -218,6 +222,7 @@ class Adi2Edf:
             # close edf file writer
             edf.close()
     
+    
     @beartype
     def get_filechunks(self, block:int, idx:list):
         """
@@ -230,7 +235,7 @@ class Adi2Edf:
         
         Returns
         -------
-        data : list, contains channels as 1D numpy arrays,
+        data : list, contains channels as 1D numpy arrays.
         list length = self.ch_list.
 
         """
