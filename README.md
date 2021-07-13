@@ -1,6 +1,6 @@
 # adi-to-edf
 - Converts labchart files to edf.
-- Data can also be downsampled(decimated) to reduce file size.
+- Data can also be downsampled (decimated) to reduce file size.
 - One labchart file will be converted to multiple edf files depending on the file format.
 - Each block of the labchart file will be converted to a new edf file.
 
