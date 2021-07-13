@@ -40,7 +40,7 @@ A labchart file that contains 4 animals will be converted to 4 edf files.
 - animal_ch_list : List containing smaller lists with indivdiual animal channels
 per labchart file.
     
-* edf attributes, click [here](https://pyedflib.readthedocs.io/en/latest/ref/edfwriter.html) for more information.*
+-> *edf attributes, click [here](https://pyedflib.readthedocs.io/en/latest/ref/edfwriter.html) for more information.
 - *physical_max
 - *physical_min
 - *digital_max
