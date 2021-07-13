@@ -12,7 +12,7 @@ A labchart file that contains 4 animals will be converted to 4 edf files.
 ### Requirements
 - Currently only runs on windows OS due to labchart toolbox [SDK dependency](https://www.adinstruments.com/support/knowledge-base/can-i-read-raw-data-recorded-labchart-data-files-another-companys-software).
 - All animals per labchart file have the same number of channels.
--
+
 *For batch analysis (batch_convert.py)
 - All files have the same channel format.
 - CSV file with paths (check eeg_paths_template.csv for detailed info)
