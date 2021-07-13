@@ -41,9 +41,10 @@ A labchart file that contains 4 animals will be converted to 4 edf files.
 per labchart file.
     
 *edf attributes, click [here](https://pyedflib.readthedocs.io/en/latest/ref/edfwriter.html) for more information.*
-- physical_max
-- physical_min
-- digital_max
-- digital_min
-- dimension
+- *physical_max
+- *physical_min
+- *digital_max
+- *digital_min
+- *dimension
+
 --------------
