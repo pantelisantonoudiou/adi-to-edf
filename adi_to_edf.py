@@ -120,7 +120,10 @@ class Adi2Edf:
             self.channel_info.append(ch_dict)
 
         # Get adi file obj to retrieve settings
-        self.file_obj = adi.read_file(os.path.join(self.load_path, self.file_name + '.adicht'))
+        try:
+            self.file_obj = adi.read_file(os.path.join(self.load_path, self.file_name + '.adicht'))
+        except:
+            raise Exception('Could not open: ' + os.path.join(self.load_path, self.file_name + '.adicht'))
         
 
     def convert_file(self):
@@ -143,7 +146,6 @@ class Adi2Edf:
         all_blocks = len(self.file_obj.channels[0].n_samples)
         
         for block in range(all_blocks): # iterate over blocks
-        
             try:
                 print('--- Converting block :', block, 'in File:', self.file_name + '.adicht', '\n')
                 
