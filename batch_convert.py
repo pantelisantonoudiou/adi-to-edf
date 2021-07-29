@@ -7,9 +7,12 @@ Created on Tue Jul  6 14:27:20 2021
 
 ### ------------------------ IMPORTS -------------------------------------- ###
 from beartype import beartype
-import json, os, click
+import json, os, click, string
 import pandas as pd
 from adi_to_edf import Adi2Edf
+
+# get ASCII characters only
+printable = set(string.printable)
 ### ------------------------------------------------------------------------###
 
 @beartype
@@ -111,7 +114,8 @@ def main(csv_path:str):
         click.secho(print_str , fg = 'green', bold = True)
 
         # separate file path with the file name
-        file_path, file_name = sep_dir(filepaths.file_path[i]) 
+        cleaned_path = list(filter(lambda x: x in printable, filepaths.file_path[i]))   # get only ascii characters
+        file_path, file_name = sep_dir(''.join(cleaned_path)) 
         
         # find position of animal in list
         pos = find_position(filepaths.animals[i], str(filepaths.animalID[i]), '_')
